@@ -8,7 +8,7 @@ specifically useful for setting delays for individual frames.
 ## install
 
 ``` sh
-npm install raine/gifsickle
+npm install gifsickle
 ```
 
 ## usage
