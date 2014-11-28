@@ -11,6 +11,10 @@
   ],
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raine/gifsickle.git"
+  },
   "dependencies": {
     "gifsicle": "^1.0.3",
     "lodash": "^2.4.1"
