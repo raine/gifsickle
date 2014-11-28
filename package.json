@@ -1,13 +1,14 @@
 {
   "name": "gifsickle",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "gifsicle", "gif"
+    "gifsicle",
+    "gif"
   ],
   "author": "Raine Virta <raine.virta@gmail.com>",
   "license": "MIT",
@@ -16,7 +17,7 @@
     "url": "https://github.com/raine/gifsickle.git"
   },
   "dependencies": {
-    "gifsicle": "^1.0.3",
+    "gifsicle": "^2.0.1",
     "lodash": "^2.4.1"
   }
 }
