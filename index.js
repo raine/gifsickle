@@ -1,6 +1,6 @@
 var execFile = require('child_process').execFile;
 var gifsicle = require('gifsicle').path;
-var _ = require('lodash');
+var R = require('ramda');
 var fmt = require('util').format;
 
 module.exports = function(dest, opts, cb) {
@@ -14,7 +14,7 @@ module.exports = function(dest, opts, cb) {
   args = args.concat(opts.frames);
   execFile(gifsicle, args, function(err) {
     if (err) return cb(err);
-    if (_.isEmpty(opts.frameDelays)) {
+    if (R.isEmpty(opts.frameDelays)) {
       cb(null);
     } else {
       args = [ '-b', dest ]
@@ -29,17 +29,20 @@ module.exports = function(dest, opts, cb) {
 
 // use general delay or a delay specified for a single frame
 function delaysForEachFrame(opts) {
-  return _.map(_.range(0, opts.frames.length), function(i) {
+  var indexes = R.range(0, opts.frames.length);
+  var mapDelays = R.map(function(i) {
     return [ i, opts.frameDelays[i] || opts.delay ];
   });
+
+  return mapDelays(indexes);
 }
 
 function formatDelayArgs(delays) {
-  return _.flatten(_.map(delays, unpack(delayArg)));
+  return R.chain(unpack(delayArg), delays);
+}
 
-  function delayArg(frameIndex, delay) {
-    return ['-d', String(delay), fmt('#%s', frameIndex)];
-  }
+function delayArg(frameIndex, delay) {
+  return ['-d', String(delay), fmt('#%s', frameIndex)];
 }
 
 function unpack(fn) {
