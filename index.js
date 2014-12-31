@@ -38,15 +38,9 @@ function delaysForEachFrame(opts) {
 }
 
 function formatDelayArgs(delays) {
-  return R.chain(unpack(delayArg), delays);
+  return R.chain(R.apply(delayArg), delays);
 }
 
 function delayArg(frameIndex, delay) {
   return ['-d', String(delay), fmt('#%s', frameIndex)];
-}
-
-function unpack(fn) {
-  return function(args) {
-    return fn.apply(this, args);
-  };
 }
