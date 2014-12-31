@@ -4,43 +4,36 @@ var R = require('ramda');
 var fmt = require('util').format;
 
 module.exports = function(dest, opts, cb) {
+  var baseDelay = opts.delay != null ? opts.delay : 10;
   var args = [
     '-o', dest,
-    '-d', String(opts.delay),
+    '-d', String(baseDelay),
     '--loop',
     '-D', String(2)
   ];
 
-  args = args.concat(opts.frames);
+  args = args.concat(R.pluck('path', opts.frames));
   execFile(gifsicle, args, function(err) {
     if (err) return cb(err);
-    if (R.isEmpty(opts.frameDelays)) {
-      cb(null);
-    } else {
-      args = [ '-b', dest ]
-        .concat(formatDelayArgs(delaysForEachFrame(opts)));
-      execFile(gifsicle, args, function(err) {
-        if (err) cb(err);
-        else     cb(null);
-      });
-    }
+
+    var delays = delaysForEachFrame(opts.frames, baseDelay);
+    var delayArgs = R.chain(R.apply(delayArg), delays);
+
+    args = [ '-b', dest ].concat(delayArgs);
+    execFile(gifsicle, args, function(err) {
+      if (err) cb(err);
+      else     cb(null);
+    });
   });
 };
 
 // use general delay or a delay specified for a single frame
-function delaysForEachFrame(opts) {
-  var indexes = R.range(0, opts.frames.length);
-  var mapDelays = R.map(function(i) {
-    return [ i, opts.frameDelays[i] || opts.delay ];
-  });
-
-  return mapDelays(indexes);
-}
-
-function formatDelayArgs(delays) {
-  return R.chain(R.apply(delayArg), delays);
+function delaysForEachFrame(frames, baseDelay) {
+  return R.map.idx(function(frame, i) {
+    return [ i, frame.delay != null ? frame.delay : baseDelay ];
+  }, frames);
 }
 
 function delayArg(frameIndex, delay) {
-  return ['-d', String(delay), fmt('#%s', frameIndex)];
+  return [ '-d', String(delay), fmt('#%s', frameIndex) ];
 }
