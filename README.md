@@ -15,14 +15,16 @@ npm install gifsickle
 
 ``` js
 var gifsickle = require('gifsickle');
-var gifs = require('glob').sync('*.gif');
+var frames = require('glob').sync('*.gif').map(function(path) {
+  return { path: path }
+});
 
-gifsickle('foo.gif', {
-  frames: gifs,
+// set the delay of 0.5s to first frame
+frames[0].delay = 50;
+
+gifsickle('foo.gif', [
+  frames: frames,
   delay: 15,
-  frameDelays: {
-    0: 50 // sets the delay of 0.5s to first frame
-  }
 }, function() {
   console.log('gif is ready');
 });
